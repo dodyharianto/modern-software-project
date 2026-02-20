@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, Boolean, ForeignKey, JSON, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from app.db.db import Base
+from backend.db.db import Base
 from pydantic import BaseModel
 
 class Candidate(Base):

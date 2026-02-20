@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, JSON
 from sqlalchemy.orm import relationship
-from app.db.db import Base
+from backend.db.db import Base
 
 class JobDescription(Base):
     __tablename__ = "job_descriptions"
