@@ -1,4 +1,4 @@
-from app.db.db import Base
+from backend.db.db import Base
 from .roles import Role
 from .candidates import Candidate
 from .interviews import Interview

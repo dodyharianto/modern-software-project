@@ -5,11 +5,11 @@ DATABASE_URL = "sqlite:///./app.db"
 
 engine = create_engine(
     DATABASE_URL, 
-    connect_args={"check_same_thread": False}
+    connect_args={"check_same_thread": False},
+    echo=False,  # Set to True for SQL debug logging
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()
 
 def get_db():
@@ -18,3 +18,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def get_engine():
+    """Expose engine for migrations and direct access."""
+    return engine

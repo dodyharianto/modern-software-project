@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, JSON, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from app.db.db import Base
+from backend.db.db import Base
 
 class EvaluationChat(Base):
     __tablename__ = "evaluation_chats"
