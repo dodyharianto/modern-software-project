@@ -183,18 +183,18 @@ ngrok http 3000
 .
 ├── backend/
 │   ├── agents/          # CrewAI agents
-│   ├── database/        # SQLAlchemy models, SQLite (recruiter.db)
+│   ├── db/        # SQLAlchemy models, SQLite (recruiter.db)
 │   ├── services/        # Storage, auth, PDF, audio, etc.
 │   ├── scripts/         # One-off scripts (e.g. assign_roles_creator, mark_negative_candidates)
 │   ├── rules/           # Consent rules configuration
-│   ├── main.py          # FastAPI application
-│   ├── requirements.txt
-│   ├── install_fix.bat  # Windows: pip install with retry (requires existing venv)
-│   ├── install_packages.py  # Alternative: pip install from requirements.txt with retry
-│   └── data/            # Created at runtime: roles, candidates, recruiter.db, etc.
+│   ├── models/
 ├── frontend/
 │   ├── pages/           # Next.js pages
 │   ├── components/      # React components
+│   ├── lib/
+│   ├── node_modules/
+│   ├── styles/
+│   ├── .next/
 │   └── ...
 └── ...
 ```
