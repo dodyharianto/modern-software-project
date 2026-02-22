@@ -111,6 +111,7 @@ Login and access control use **JWT (JSON Web Tokens)** and **role-based** checks
 
 ## Setup
 
+
 ### Backend Setup
 
 1. Navigate to backend directory:
@@ -271,3 +272,5 @@ ngrok http 3000
 ## License
 
 MIT
+
+## End
