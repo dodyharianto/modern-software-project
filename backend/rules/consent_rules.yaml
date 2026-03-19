@@ -1,0 +1,54 @@
+# Consent Rules Configuration
+# This file defines rules for generating region-compliant consent forms
+
+regions:
+  EU:
+    regulations:
+      - GDPR
+    required_clauses:
+      - Right to access personal data
+      - Right to rectification
+      - Right to erasure
+      - Right to data portability
+      - Right to object to processing
+      - Data retention period specification
+      - Legal basis for processing
+    default_retention: "24 months"
+  
+  UK:
+    regulations:
+      - UK GDPR
+    required_clauses:
+      - Right to access personal data
+      - Right to rectification
+      - Right to erasure
+      - Right to data portability
+      - Right to object to processing
+      - Data retention period specification
+      - Legal basis for processing
+    default_retention: "24 months"
+  
+  California:
+    regulations:
+      - CCPA
+    required_clauses:
+      - Right to know what personal information is collected
+      - Right to delete personal information
+      - Right to opt-out of sale
+      - Non-discrimination clause
+    default_retention: "12 months"
+  
+  default:
+    required_clauses:
+      - Purpose of data collection
+      - Data sharing and third parties
+      - Security measures
+      - Contact information for data controller
+    default_retention: "24 months"
+
+data_usage_purposes:
+  - recruitment
+  - background_check
+  - onboarding
+  - analytics
+

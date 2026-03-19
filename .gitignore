@@ -5,6 +5,14 @@ env/
 ENV/
 .conda/
 
+# Database
+app.db
+*.db
+
+# IDE
+.vscode/
+.idea/
+
 # Python cache
 __pycache__/
 *.py[cod]
