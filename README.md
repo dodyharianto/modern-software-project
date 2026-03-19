@@ -183,7 +183,7 @@ ngrok http 3000
 .
 ├── backend/
 │   ├── agents/          # CrewAI agents
-│   ├── db/        # SQLAlchemy models, SQLite (recruiter.db)
+│   ├── db/              # SQLAlchemy models, SQLite (recruiter.db)
 │   ├── services/        # Storage, auth, PDF, audio, etc.
 │   ├── scripts/         # One-off scripts (e.g. assign_roles_creator, mark_negative_candidates)
 │   ├── rules/           # Consent rules configuration
