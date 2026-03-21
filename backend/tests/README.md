@@ -71,9 +71,8 @@ Expected results (with API key):
 ## Manual Testing - AI Agent Outputs
 
 AI-powered features were manually tested by running the application
-and evaluating outputs visually. This approach is justified by
-Topic 6 which states that exact matching does not work with
-generative AI and that eyeballing results is an accepted approach.
+and evaluating outputs visually. Exact output matching is not
+feasible for generative AI components as outputs are non-deterministic.
 
 ### Features Manually Tested
 
@@ -154,17 +153,13 @@ testable components given the constraints of the project.
 
 ## Testing Approach
 
-Based on Topic 6 - Software Quality 1 (SMU IS631):
-
-- File 1 uses blackbox and whitebox testing with input
-  partitioning and boundary values applied to consent logic
-- File 2 uses sanity checks as recommended for AI components
-  where exact output matching is not feasible
-- Manual testing and eyeballing used for audio and PDF
-  processing features which require physical files and
-  live API responses
-- Exhaustive testing is not the goal — test cases were
-  chosen carefully and systematically to cover the most
+- Blackbox and whitebox testing with input partitioning and
+  boundary values applied to consent logic
+- Sanity checks for AI components where exact output matching
+  is not feasible for generative outputs
+- Manual testing used for audio and PDF processing features
+  which require physical files and live API responses
+- Test cases were chosen systematically to cover the most
   critical paths and highest compliance risk areas
 - Full integration and end-to-end testing is recommended
-  as a next step before production deployment
+  before production deployment
