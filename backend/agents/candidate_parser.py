@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 
 from backend.openai_env import openai_api_key_for_clients
-from backend.agents.crew_compat import task_output_to_str
+from backend.agents.crew_compat import run_crew_task_async, task_output_to_str
 
 load_dotenv()
 
@@ -61,7 +61,7 @@ class CandidateParserAgent:
             expected_output="A JSON object with name, summary, skills, experience, and parsed_insights fields"
         )
         
-        result = task_output_to_str(await task.aexecute_sync())
+        result = task_output_to_str(await run_crew_task_async(task))
         
         import json
         try:

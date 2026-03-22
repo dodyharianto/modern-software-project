@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 
 from backend.openai_env import openai_api_key_for_clients
-from backend.agents.crew_compat import task_output_to_str
+from backend.agents.crew_compat import run_crew_task_async, task_output_to_str
 
 load_dotenv()
 
@@ -217,6 +217,6 @@ class EvaluationAgent:
             expected_output="A detailed, specific answer that references actual candidate names, skills, and qualifications from the provided data"
         )
         
-        result = task_output_to_str(await task.aexecute_sync())
+        result = task_output_to_str(await run_crew_task_async(task))
         return result.strip()
 

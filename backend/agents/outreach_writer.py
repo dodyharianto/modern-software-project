@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 
 from backend.openai_env import openai_api_key_for_clients
-from backend.agents.crew_compat import task_output_to_str
+from backend.agents.crew_compat import run_crew_task_async, task_output_to_str
 
 load_dotenv()
 
@@ -98,7 +98,7 @@ class OutreachWriterAgent:
             expected_output="A personalized outreach message as plain text (2-3 paragraphs)"
         )
         
-        result = task_output_to_str(await task.aexecute_sync())
+        result = task_output_to_str(await run_crew_task_async(task))
         return result.strip()
 
     async def generate_recruiter_notes(
@@ -135,6 +135,6 @@ class OutreachWriterAgent:
             agent=self.agent,
             expected_output="2-4 short personalization hints as plain text",
         )
-        result = task_output_to_str(await task.aexecute_sync())
+        result = task_output_to_str(await run_crew_task_async(task))
         return result.strip()
 

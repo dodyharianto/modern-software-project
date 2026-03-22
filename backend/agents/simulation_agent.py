@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 
 from backend.openai_env import openai_api_key_for_clients
+from backend.agents.crew_compat import run_crew_task_async
 
 load_dotenv()
 
@@ -72,7 +73,7 @@ class SimulationAgent:
             expected_output="A JSON object with subject, body (2-4 sentences), sentiment, and delay_days fields"
         )
         
-        result = await task.aexecute_sync()
+        result = await run_crew_task_async(task)
         # CrewAI may return TaskOutput or string; get string content
         if result is None:
             result_str = ""
