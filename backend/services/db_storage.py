@@ -293,8 +293,8 @@ class DatabaseStorageService:
     def _candidate_to_dict(self, c: CandidateModel) -> Dict[str, Any]:
         return {
             "id": c.id,
-            "name": c.name,
-            "summary": c.summary,
+            "name": c.name or "",
+            "summary": c.summary or "",
             "skills": _json_loads(c.skills, []),
             "experience": c.experience or "",
             "parsed_insights": _json_loads(c.parsed_insights, {}),

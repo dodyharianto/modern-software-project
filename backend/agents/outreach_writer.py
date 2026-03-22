@@ -53,13 +53,18 @@ class OutreachWriterAgent:
         
         briefing_text = ""
         if briefing:
+            ef = briefing.get("extracted_fields", {}) or {}
+            if not isinstance(ef, dict):
+                ef = {}
             briefing_text = f"""
             HR Briefing (use for context, priorities, team fit):
-            Summary: {briefing.get('summary', '')}
-            Key points: {briefing.get('extracted_fields', {})}
+            Summary: {briefing.get('summary') or ''}
+            Key points: {ef}
             """
         
         insights = candidate.get("parsed_insights", {}) or {}
+        if not isinstance(insights, dict):
+            insights = {}
         insights_text = "\n".join(f"  - {k}: {v}" for k, v in insights.items() if v)
         
         recruiter_hints = ""
@@ -69,15 +74,20 @@ class OutreachWriterAgent:
             {recruiter_notes.strip()}
             """
         
+        skills_list = candidate.get("skills") or []
+        if not isinstance(skills_list, list):
+            skills_list = []
+        skill_bits = [str(s) if not isinstance(s, dict) else str(s.get("name", s)) for s in skills_list[:15]]
+
         task = Task(
             description=f"""
             Write a personalized outreach message for this candidate. The message must sound like it was crafted by a real recruiter who has studied their profile—NOT a generic template.
 
             CANDIDATE (study these details; reference specifics):
-            Name: {candidate.get('name', '')}
-            Summary: {candidate.get('summary', '')}
-            Experience: {candidate.get('experience', '')[:500]}...
-            Skills: {', '.join((candidate.get('skills') or [])[:15])}
+            Name: {candidate.get('name') or ''}
+            Summary: {(candidate.get('summary') or '')[:2000]}
+            Experience: {(candidate.get('experience') or '')[:500]}...
+            Skills: {', '.join(skill_bits)}
             Parsed insights:
             {insights_text}
 
@@ -110,21 +120,32 @@ class OutreachWriterAgent:
     ) -> str:
         """Generate suggested recruiter notes / customization hints for outreach"""
         jd_text = ""
-        if jd:
-            jd_text = f"Role: {role.get('title', '')}. JD: {jd.get('job_title', '')} - {jd.get('job_summary', '')[:200]}"
-        briefing_text = briefing.get("summary", "")[:300] if briefing else ""
+        if jd and isinstance(jd, dict):
+            jsum = jd.get("job_summary") or ""
+            jd_text = f"Role: {role.get('title') or ''}. JD: {jd.get('job_title') or ''} - {jsum[:200]}"
+        briefing_text = ""
+        if briefing and isinstance(briefing, dict):
+            briefing_text = (briefing.get("summary") or "")[:300]
         insights = candidate.get("parsed_insights", {}) or {}
-        insights_text = ", ".join(f"{k}: {v}" for k, v in list(insights.items())[:5] if v)
+        if not isinstance(insights, dict):
+            insights = {}
+        insights_text = ", ".join(
+            f"{k}: {v}" for k, v in list(insights.items())[:5] if v
+        )
+        skills_list = candidate.get("skills") or []
+        if not isinstance(skills_list, list):
+            skills_list = []
+        skill_bits = [str(s) if not isinstance(s, dict) else str(s.get("name", s)) for s in skills_list[:10]]
 
         task = Task(
             description=f"""
             A recruiter is about to write outreach to this candidate. Suggest 2-4 brief, actionable notes they could add to personalize the message.
             Output as a short bullet list or comma-separated hints. Be specific to this candidate.
 
-            Candidate: {candidate.get('name', '')}
-            Summary: {candidate.get('summary', '')[:300]}
-            Experience: {candidate.get('experience', '')[:300]}
-            Skills: {', '.join((candidate.get('skills') or [])[:10])}
+            Candidate: {candidate.get('name') or ''}
+            Summary: {(candidate.get('summary') or '')[:300]}
+            Experience: {(candidate.get('experience') or '')[:300]}
+            Skills: {', '.join(skill_bits)}
             Insights: {insights_text}
 
             {jd_text}

@@ -176,9 +176,14 @@ export default function OutreachConsentPage() {
         `/api/roles/${selected.roleId}/candidates/${selected.id}/outreach-notes`
       );
       setRecruiterNotes(res.data.recruiter_notes || '');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error generating notes:', error);
-      alert('Failed to generate notes');
+      const ax = error as { response?: { data?: { detail?: string; message?: string } } };
+      const detail =
+        ax.response?.data?.detail ||
+        ax.response?.data?.message ||
+        (error instanceof Error ? error.message : null);
+      alert(detail ? `Failed to generate notes: ${detail}` : 'Failed to generate notes');
     } finally {
       setIsGeneratingNotes(false);
     }
