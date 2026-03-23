@@ -769,8 +769,16 @@ async def simulate_consent_reply(role_id: str, candidate_id: str, params: Dict[s
     else:
         reply_content = f"Hi,\n\nI DO NOT CONSENT. Thank you for your time.\n\nBest regards,\n{candidate.get('name', 'Candidate')}"
         response_text = "I DO NOT CONSENT"
-        
-    analysis = await email_monitor.analyze_email(reply_content, candidate.get("name"))
+
+    try:
+        analysis = await email_monitor.analyze_email(reply_content, candidate.get("name"))
+    except Exception:
+        analysis = {
+            "sentiment": "positive" if consent_status == "consented" else "negative",
+            "intent": "interested" if consent_status == "consented" else "not_interested",
+            "key_points": [],
+            "recommended_action": "Record consent" if consent_status == "consented" else "Close candidate",
+        }
     reply_data = {
         "content": reply_content,
         "sentiment": analysis.get("sentiment", "positive" if consent_status == "consented" else "neutral"),

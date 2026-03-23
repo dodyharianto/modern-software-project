@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import axios from 'axios';
+import axios from '../lib/axios';
+import { getApiErrorMessage } from '../lib/apiErrorMessage';
 import { FiSearch, FiMail, FiSend, FiUser, FiFileText, FiExternalLink } from 'react-icons/fi';
 
 interface Role {
@@ -217,7 +218,7 @@ export default function OutreachConsentPage() {
     setIsSendingConsent(true);
     try {
       const template = templates.find((t) => t.id === selectedTemplateId);
-      await axios.post(
+      const res = await axios.post(
         `/api/roles/${selected.roleId}/candidates/${selected.id}/send-consent`,
         {
           candidate_name: selected.name,
@@ -225,13 +226,22 @@ export default function OutreachConsentPage() {
           email: candidateEmail,
           consent_content: content,
           consent_content_id: template?.id || '',
-        }
+        },
+        { timeout: 60000 }
       );
-      setSelected(null);
+      const updated = res.data.candidate;
+      if (updated) {
+        setSelected({
+          ...selected,
+          ...updated,
+          roleId: selected.roleId,
+          roleTitle: selected.roleTitle,
+        });
+      }
       fetchData();
     } catch (error) {
       console.error('Error sending consent:', error);
-      alert('Failed to send consent email');
+      alert(`Failed to send consent email: ${getApiErrorMessage(error)}`);
     } finally {
       setIsSendingConsent(false);
     }
@@ -257,9 +267,18 @@ export default function OutreachConsentPage() {
     try {
       const res = await axios.post(
         `/api/roles/${selected.roleId}/candidates/${selected.id}/simulate-outreach-reply`,
-        { reply_type: replyType }
+        { reply_type: replyType },
+        { timeout: 180000 }
       );
-      setSelected(res.data.candidate);
+      const updated = res.data.candidate;
+      if (updated) {
+        setSelected({
+          ...selected,
+          ...updated,
+          roleId: selected.roleId,
+          roleTitle: selected.roleTitle,
+        });
+      }
       fetchData();
       if (replyType === 'positive') {
         alert('Good response simulated. Candidate moved to Follow-up. You can now send the consent form below.');
@@ -282,13 +301,22 @@ export default function OutreachConsentPage() {
     try {
       const res = await axios.post(
         `/api/roles/${selected.roleId}/candidates/${selected.id}/simulate-consent-reply`,
-        { consent_status: consentStatus }
+        { consent_status: consentStatus },
+        { timeout: 180000 }
       );
-      setSelected(res.data.candidate);
+      const updated = res.data.candidate;
+      if (updated) {
+        setSelected({
+          ...selected,
+          ...updated,
+          roleId: selected.roleId,
+          roleTitle: selected.roleTitle,
+        });
+      }
       fetchData();
     } catch (error) {
       console.error('Error simulating reply:', error);
-      alert('Failed to simulate reply');
+      alert(`Failed to simulate reply: ${getApiErrorMessage(error)}`);
     } finally {
       setIsSimulating(false);
     }
