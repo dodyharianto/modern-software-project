@@ -1,5 +1,5 @@
 import logging
-from fastapi import FastAPI, UploadFile, File, HTTPException, Body, Request
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Body, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -476,24 +476,33 @@ async def delete_candidate(role_id: str, candidate_id: str):
 
 
 @app.post("/api/hr-briefings")
-async def upload_hr_briefing(file: UploadFile = File(...), role_ids: str = None):
+async def upload_hr_briefing(
+    file: UploadFile = File(...),
+    role_ids: Optional[str] = Form(None),
+):
     """Upload HR briefing audio file"""
+    content = await file.read()
+    if not content:
+        raise HTTPException(status_code=400, detail="Empty audio upload")
+    role_id_list = (
+        [r.strip() for r in role_ids.split(",") if r.strip()] if role_ids else []
+    )
     # Save file (returns tuple: file_path, briefing_id)
-    file_path, briefing_id = file_storage.save_hr_briefing(file)
-    
+    file_path, briefing_id = file_storage.save_hr_briefing(file.filename, content)
+
     # Transcribe audio (use async version)
     transcription = await audio_transcription.transcribe_async(file_path)
-    
+
     # Use HR Briefing Agent
     briefing_data = await hr_briefing_agent.process_briefing(transcription)
-    
+
     # Save briefing (reuse the briefing_id from file save)
     briefing_id = file_storage.create_hr_briefing(
-        briefing_data, 
-        role_ids.split(',') if role_ids else [],
-        briefing_id=briefing_id
+        briefing_data,
+        role_id_list,
+        briefing_id=briefing_id,
     )
-    
+
     return {"message": "HR briefing processed successfully", "briefing_id": briefing_id, "briefing": briefing_data}
 
 

@@ -418,14 +418,16 @@ class DatabaseStorageService:
         return self.get_candidate(role_id, candidate_id)
 
     # ---------- HR Briefings ----------
-    def save_hr_briefing(self, file) -> tuple:
+    def save_hr_briefing(self, filename: Optional[str], content: bytes) -> tuple:
         briefing_id = str(uuid.uuid4())
         briefings_dir = self.base_dir / "hr_briefings" / briefing_id
         briefings_dir.mkdir(parents=True, exist_ok=True)
-        ext = Path(file.filename).suffix if file.filename else ".mp3"
+        ext = Path(filename).suffix if filename else ".mp3"
+        if not ext or ext == ".":
+            ext = ".mp3"
         audio_path = briefings_dir / f"briefing{ext}"
         with open(audio_path, "wb") as f:
-            f.write(file.file.read())
+            f.write(content)
         return audio_path, briefing_id
 
     def create_hr_briefing(self, briefing_data: Dict[str, Any], role_ids: List[str], briefing_id: str = None) -> str:

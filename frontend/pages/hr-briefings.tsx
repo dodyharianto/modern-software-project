@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { formatExtractedFields } from '../lib/formatExtractedFields';
-import axios from 'axios';
+import axios from '../lib/axios';
 import { FiUpload, FiMic, FiStopCircle, FiX } from 'react-icons/fi';
 
 export default function HRBriefingsPage() {
@@ -64,14 +64,18 @@ export default function HRBriefingsPage() {
     formData.append('role_ids', selectedRoles.join(','));
 
     try {
-      await axios.post('/api/hr-briefings', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      // Do not set Content-Type manually — axios must add the multipart boundary.
+      await axios.post('/api/hr-briefings', formData);
       fetchBriefings();
       setSelectedRoles([]);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error uploading briefing:', error);
-      alert('Failed to upload HR briefing');
+      const ax = error as { response?: { data?: { detail?: string; message?: string } } };
+      const detail =
+        ax.response?.data?.detail ||
+        ax.response?.data?.message ||
+        (error instanceof Error ? error.message : null);
+      alert(detail ? `Failed to upload HR briefing: ${detail}` : 'Failed to upload HR briefing');
     } finally {
       setIsUploading(false);
     }

@@ -375,20 +375,20 @@ class FileStorageService:
             json.dump(candidate, f, indent=2)
         return candidate
 
-    def save_hr_briefing(self, file) -> Path:
-        """Save HR briefing audio file"""
+    def save_hr_briefing(self, filename: Optional[str], content: bytes):
+        """Save HR briefing audio file (bytes from UploadFile.read())."""
         briefing_id = str(uuid.uuid4())
         briefing_dir = self.hr_briefings_dir / briefing_id
         briefing_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Determine file extension
-        ext = Path(file.filename).suffix if file.filename else ".mp3"
+
+        ext = Path(filename).suffix if filename else ".mp3"
+        if not ext or ext == ".":
+            ext = ".mp3"
         audio_path = briefing_dir / f"briefing{ext}"
-        
+
         with open(audio_path, "wb") as f:
-            content = file.file.read()
             f.write(content)
-        
+
         return audio_path, briefing_id
     
     def create_hr_briefing(self, briefing_data: Dict[str, Any], role_ids: List[str], briefing_id: str = None) -> str:
